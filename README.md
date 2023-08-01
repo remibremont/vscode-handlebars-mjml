@@ -1,8 +1,8 @@
-# This repo is archived
+# This repo is a fork of vscode-mjml
 
 
 # MJML
-MJML preview, lint, compile for Visual Studio Code.
+MJML preview, lint, compile with handlebars support for Visual Studio Code.
 
 [![GitHub license][license-img]][license-url]
 [![Visual Studio Marketplace][vs-market-version]][vs-market-url]

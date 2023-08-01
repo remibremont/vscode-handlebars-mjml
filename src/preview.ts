@@ -1,7 +1,7 @@
 import { basename } from "path";
 import { commands, Disposable, ExtensionContext, TextDocument, TextDocumentChangeEvent, TextEditor, ViewColumn, WebviewPanel, window, workspace } from "vscode";
 
-import { fixImages, isMJMLFile, mjmlToHtml } from "./helper";
+import { compileContent, fixImages, isMJMLFile } from "./helper";
 
 export default class Preview {
 
@@ -101,7 +101,8 @@ export default class Preview {
     }
 
     private getContent(document: TextDocument): string {
-        const html: string = mjmlToHtml(document.getText(), false, false, document.uri.fsPath, "skip").html;
+
+        const { html } = compileContent(document);
 
         if (html) {
             this.addDocument(document.fileName);

@@ -1,6 +1,6 @@
 import { Diagnostic, DiagnosticCollection, DiagnosticSeverity, Disposable, languages, Position, Range, TextDocument, TextDocumentChangeEvent, TextEditor, window, workspace } from "vscode";
 
-import { getPath, mjmlToHtml } from "./helper";
+import { compileContent, getPath } from "./helper";
 
 export default class Linter {
 
@@ -62,13 +62,15 @@ export default class Linter {
         const diagnostics: Diagnostic[] = [];
 
         try {
-            const errors: any = mjmlToHtml(textDocument.getText(), false, false, getPath(), "strict").errors;
-
+            // const errors: any = mjmlToHtml(textDocument.getText(), false, false, getPath(), "strict").errors;
+            const { errors } = compileContent(textDocument, getPath(), "strict")
             if (errors && errors[0]) {
                 errors[0].errors.forEach((error: any) => {
                     const line: number = error.line - 1;
                     const currentLine: string = textDocument.lineAt(line).text;
-
+                    // if (/Attribute [A-Za-z0-9_-]+ has invalid value: \{\{[^\}]+\}\} for type Color/.test(error.message)) {
+                    //     // attribute is good, it's just templated
+                    // }
                     diagnostics.push(new Diagnostic(
                         new Range(
                             new Position(line, currentLine.indexOf("<")),
