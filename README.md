@@ -191,7 +191,3 @@ This extension is licensed under the [MIT License][license-url].
 
 [license-img]: https://img.shields.io/github/license/remibremont/vscode-handlebars-mjml.svg?style=flat-square
 [license-url]: https://raw.githubusercontent.com/remibremont/vscode-handlebars-mjml/master/LICENSE
-[vs-market-version]: https://img.shields.io/vscode-marketplace/v/attilabuti.vscode-mjml.svg?style=flat-square
-[vs-market-installs]: https://img.shields.io/vscode-marketplace/d/attilabuti.vscode-mjml.svg?style=flat-square
-[vs-market-url]: https://marketplace.visualstudio.com/items?itemName=attilabuti.vscode-mjml
-[dependencies-status]: https://david-dm.org/remibremont/vscode-handlebars-mjml/status.svg?style=flat-square
