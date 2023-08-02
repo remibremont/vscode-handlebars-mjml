@@ -1,24 +1,23 @@
 {
-    "name": "vscode-mjml",
-    "displayName": "MJML",
-    "description": "MJML preview, lint, compile for Visual Studio Code.",
-    "version": "1.6.0",
-    "publisher": "attilabuti",
+    "name": "vscode-handlebars-mjml",
+    "displayName": "Handlebars-MJML",
+    "description": "MJML preview, lint, compile with handlebars templating for Visual Studio Code.",
+    "version": "1.0.0",
+    "publisher": "remibremont",
     "license": "MIT",
     "readme": "README.md",
     "icon": "images/icon.png",
     "author": {
-        "name": "Attila Buti",
-        "email": "hello@attilabuti.com",
-        "url": "https://attilabuti.com"
+        "name": "Rémi Brémont",
+        "email": "remi.bremont.dev@gmail.com"
     },
-    "homepage": "https://github.com/attilabuti/vscode-mjml#readme",
+    "homepage": "https://github.com/remibremont/vscode-handlebars-mjml#readme",
     "repository": {
         "type": "git",
-        "url": "https://github.com/attilabuti/vscode-mjml"
+        "url": "https://github.com/remibremont/vscode-handlebars-mjml"
     },
     "bugs": {
-        "url": "https://github.com/attilabuti/vscode-mjml/issues"
+        "url": "https://github.com/remibremont/vscode-handlebars-mjml/issues"
     },
     "galleryBanner": {
         "color": "#f45e43",
@@ -320,19 +319,20 @@
         "@types/file-url": "^2.0.0",
         "@types/js-beautify": "^1.8.0",
         "@types/mime": "^2.0.0",
-        "@types/node-fetch": "^2.1.2",
         "@types/node": "*",
+        "@types/node-fetch": "^2.1.2",
         "@types/nodemailer": "^4.6.5",
         "@types/npm": "^2.0.29",
         "highlight.js": "^9.13.1",
-        "markdown-it-anchor": "^5.0.2",
         "markdown-it": "^8.4.2",
+        "markdown-it-anchor": "^5.0.2",
         "tslint": "^5.11.0",
-        "typescript": "^3.1.3",
+        "typescript": "^5.0.4",
         "vscode": "^1.1.21"
     },
     "dependencies": {
         "copy-paste": "^1.3.0",
+        "handlebars": "^4.7.7",
         "js-beautify": "^1.8.8",
         "mime": "^2.3.1",
         "mjml": "^4.2.0",

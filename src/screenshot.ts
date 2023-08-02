@@ -40,7 +40,7 @@ export default class Screenshot {
             location: ProgressLocation.Notification,
             title: `MJML needs to be rebuilt for your current platform. Please wait for the installation to finish...`
         }, async () => {
-            return new Promise((resolve, reject) => {
+            return new Promise<void>((resolve, reject) => {
                 process.chdir(joinPath(__dirname, ".."));
 
                 load({
@@ -199,7 +199,10 @@ export default class Screenshot {
 
                 await instance.exit();
             } catch (error) {
-                window.showErrorMessage(error.message);
+                if (error instanceof Error) {
+                    window.showErrorMessage(error.message);
+                }
+                window.showErrorMessage(String(error));
             }
         });
     }

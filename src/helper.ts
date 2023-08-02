@@ -4,7 +4,9 @@ import { TextDocument, TextEditor, window, workspace } from "vscode";
 
 import { html as jsBeautify } from "js-beautify";
 import { getExtension, getType as getMimeType } from "mime";
-import mjml2html from "mjml";
+import * as mjml2html from "mjml";
+import { compile } from 'handlebars';
+import * as path from 'path';
 
 export function renderMJML(cb: (content: string) => any, fixImg?: boolean, minify?: boolean, beautify?: boolean): void {
     const activeTextEditor: TextEditor | undefined = window.activeTextEditor;
@@ -92,8 +94,11 @@ export function beautifyHTML(mjml: string): string | undefined {
 
         return beautified;
     } catch (error) {
-        window.showErrorMessage(error);
 
+        if (error instanceof Error) {
+            window.showErrorMessage(error.message);
+        }
+        window.showErrorMessage(String(error));
         return;
     }
 }
@@ -107,8 +112,8 @@ export function getPath(): string {
 }
 
 function getCWD(mjmlPath?: string): string {
-    if (workspace.rootPath) {
-        return workspace.rootPath;
+    if (workspace.workspaceFolders !== undefined && workspace.workspaceFolders.length > 0) {
+        return workspace.workspaceFolders[0].uri.fsPath;
     }
 
     return (mjmlPath) ? parsePath(mjmlPath).dir : "";
@@ -133,4 +138,17 @@ function encodeImage(filePath: string, original: string): string {
     }
 
     return original;
+}
+
+export function compileContent(document: TextDocument, fsPath = document.uri.fsPath, validation: "skip" | "strict" | "soft" | undefined = 'skip') {
+    const text = document.getText();
+        const parsed = path.parse(document.uri.fsPath);
+        const themeFile = document.uri.fsPath.replace(parsed.base, 'email-theme.json');
+        const themeProps = existsSync(themeFile) ? JSON.parse(readFileSync(themeFile).toString()) : {};
+        const propsFile = document.uri.fsPath.replace('.mjml', '.sample.json');
+        const props = existsSync(propsFile) ? JSON.parse(readFileSync(propsFile).toString()) : {};
+        const finalProps = { theme: themeProps, ...props };
+        const compiled = compile(text)(finalProps);
+        const { html, errors } = mjmlToHtml(compiled, false, false, fsPath, validation);
+        return { html, errors };
 }
