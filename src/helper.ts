@@ -112,8 +112,8 @@ export function getPath(): string {
 }
 
 function getCWD(mjmlPath?: string): string {
-    if (workspace.rootPath) {
-        return workspace.rootPath;
+    if (workspace.workspaceFolders !== undefined && workspace.workspaceFolders.length > 0) {
+        return workspace.workspaceFolders[0].uri.fsPath;
     }
 
     return (mjmlPath) ? parsePath(mjmlPath).dir : "";
@@ -142,20 +142,13 @@ function encodeImage(filePath: string, original: string): string {
 
 export function compileContent(document: TextDocument, fsPath = document.uri.fsPath, validation: "skip" | "strict" | "soft" | undefined = 'skip') {
     const text = document.getText();
-        // console.log('text', text);
         const parsed = path.parse(document.uri.fsPath);
         const themeFile = document.uri.fsPath.replace(parsed.base, 'email-theme.json');
-        // console.log('themeFile', themeFile);
         const themeProps = existsSync(themeFile) ? JSON.parse(readFileSync(themeFile).toString()) : {};
         const propsFile = document.uri.fsPath.replace('.mjml', '.sample.json');
-        // console.log('propsFile', propsFile);
         const props = existsSync(propsFile) ? JSON.parse(readFileSync(propsFile).toString()) : {};
-        // console.log('props', props);
-        // console.log('themeProps', themeProps);
         const finalProps = { theme: themeProps, ...props };
         const compiled = compile(text)(finalProps);
-        // console.log('compiled', compiled);
         const { html, errors } = mjmlToHtml(compiled, false, false, fsPath, validation);
-        // console.log('errors', errors);
         return { html, errors };
 }
