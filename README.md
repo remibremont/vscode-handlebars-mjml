@@ -1,7 +1,7 @@
 # This repo is a fork of vscode-mjml
 
 
-# MJML
+# Handlebars - MJML
 MJML preview, lint, compile with handlebars support for Visual Studio Code.
 
 Code sample to use handlebars with MJML:
