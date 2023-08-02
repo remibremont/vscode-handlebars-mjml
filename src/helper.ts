@@ -157,5 +157,9 @@ export function compileContent(document: TextDocument, fsPath = document.uri.fsP
     });
     const compiled = Handlebars.compile(text)(finalProps);
     const { html, errors } = mjmlToHtml(compiled, minify, beautify, fsPath, validation);
+    if (errors !== undefined && errors.length === 1 && errors[0].message === 'Malformed MJML. Check that your structure is correct and enclosed in <mjml> tags.') {
+        // we may be trying to preview a partial, retry with wraaping it in <mjml><mj-body></mj-body></mjml>
+        return mjmlToHtml(`<mjml><mj-body>${compiled}</mj-body></mjml>`, minify, beautify, fsPath, validation);
+    }
     return { html, errors };
 }
