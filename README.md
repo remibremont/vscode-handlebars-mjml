@@ -189,5 +189,4 @@ A big thanks to the people that have contributed to this project:
 
 This extension is licensed under the [MIT License][license-url].
 
-[license-img]: https://img.shields.io/github/license/remibremont/vscode-handlebars-mjml.svg?style=flat-square
 [license-url]: https://raw.githubusercontent.com/remibremont/vscode-handlebars-mjml/master/LICENSE
