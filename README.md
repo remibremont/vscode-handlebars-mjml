@@ -4,6 +4,23 @@
 # MJML
 MJML preview, lint, compile with handlebars support for Visual Studio Code.
 
+Code sample to use handlebars with MJML:
+```typescript
+import { readFileSync } from 'fs';
+import Handlebars from 'handlebars';
+import mjml2html from 'mjml';
+import { resolve } from 'path';
+
+import theme from 'path/to/your/email-theme.json';
+
+const path = 'path/to/your/template.mjlml';
+const mjmlBlob = readFileSync(path, 'utf8');
+
+const templateContext = { theme, title: 'title', value: 'value' };
+const compiledMjml = Handlebars.compile(mjmlBlob)(templateContext);
+const { html } = mjml2html(compiledMjml);
+```
+
 [![GitHub license][license-img]][license-url]
 [![Visual Studio Marketplace][vs-market-version]][vs-market-url]
 [![Visual Studio Marketplace installs][vs-market-installs]][vs-market-url]
@@ -12,6 +29,8 @@ MJML preview, lint, compile with handlebars support for Visual Studio Code.
 ## Features
 
 * Live preview for MJML files. Preview updates as you type. Preview based on [html-preview-vscode](https://github.com/tht13/html-preview-vscode).
+* Renders Handlebars expressions while previewing `<your file name>.mjml` using data provided in `<your file name>.sample.json` placed in the same folder.
+* The data provided to the handlebar context will be augmented with a `theme` property set to the content of the `email-theme.json` file if present in the same folder of your previewed mjml file, or `{}` otherwise.
 * Inline errors (squiggle underlines). Linter based on [atom-linter-mjml](https://github.com/mjmlio/atom-linter-mjml).
 * Export HTML file from MJML.
 * Copy the result HTML to clipboard.
