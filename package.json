@@ -3,7 +3,7 @@
     "displayName": "Handlebars-MJML",
     "description": "MJML preview, lint, compile with handlebars templating for Visual Studio Code.",
     "version": "1.0.0",
-    "publisher": "remibremont",
+    "publisher": "rbremont",
     "license": "MIT",
     "readme": "README.md",
     "icon": "images/icon.png",
