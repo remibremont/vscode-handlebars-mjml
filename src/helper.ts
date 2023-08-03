@@ -5,7 +5,7 @@ import { TextDocument, TextEditor, window, workspace } from "vscode";
 import { html as jsBeautify } from "js-beautify";
 import { getExtension, getType as getMimeType } from "mime";
 import * as mjml2html from "mjml";
-import { compile } from 'handlebars';
+import * as Handlebars from 'handlebars';
 import * as path from 'path';
 
 export function renderMJML(cb: (content: string) => any, fixImg?: boolean, minify?: boolean, beautify?: boolean): void {
@@ -20,8 +20,9 @@ export function renderMJML(cb: (content: string) => any, fixImg?: boolean, minif
         return;
     }
 
-    let content: string = mjmlToHtml(
-        activeTextEditor.document.getText(),
+    let content: string = compileContent(
+        activeTextEditor.document,
+        getPath(),
         minify !== undefined ? minify : workspace.getConfiguration("mjml").minifyHtmlOutput,
         beautify !== undefined ? beautify : workspace.getConfiguration("mjml").beautifyHtmlOutput
     ).html;
@@ -140,15 +141,25 @@ function encodeImage(filePath: string, original: string): string {
     return original;
 }
 
-export function compileContent(document: TextDocument, fsPath = document.uri.fsPath, validation: "skip" | "strict" | "soft" | undefined = 'skip') {
+export function compileContent(document: TextDocument, fsPath = document.uri.fsPath, minify = false, beautify = false, validation: "skip" | "strict" | "soft" | undefined = 'skip') {
     const text = document.getText();
-        const parsed = path.parse(document.uri.fsPath);
-        const themeFile = document.uri.fsPath.replace(parsed.base, 'email-theme.json');
-        const themeProps = existsSync(themeFile) ? JSON.parse(readFileSync(themeFile).toString()) : {};
-        const propsFile = document.uri.fsPath.replace('.mjml', '.sample.json');
-        const props = existsSync(propsFile) ? JSON.parse(readFileSync(propsFile).toString()) : {};
-        const finalProps = { theme: themeProps, ...props };
-        const compiled = compile(text)(finalProps);
-        const { html, errors } = mjmlToHtml(compiled, false, false, fsPath, validation);
-        return { html, errors };
+    const parsedDocumentPath = path.parse(document.uri.fsPath);
+    const themeFile = document.uri.fsPath.replace(parsedDocumentPath.base, 'email-theme.json');
+    const themeProps = existsSync(themeFile) ? JSON.parse(readFileSync(themeFile).toString()) : {};
+    const propsFile = document.uri.fsPath.replace('.mjml', '.sample.json');
+    const props = existsSync(propsFile) ? JSON.parse(readFileSync(propsFile).toString()) : {};
+    const finalProps = { theme: themeProps, ...props };
+    Handlebars.registerHelper('include', (partial: string) => {
+        const partialPath = path.resolve(parsedDocumentPath.dir, `${partial}.mjml`);
+        const partialBlob = readFileSync(partialPath, 'utf8');
+        const partialCompiled = Handlebars.compile(partialBlob)(finalProps);
+        return new Handlebars.SafeString(partialCompiled);
+    });
+    const compiled = Handlebars.compile(text)(finalProps);
+    const { html, errors } = mjmlToHtml(compiled, minify, beautify, fsPath, validation);
+    if (errors !== undefined && errors.length === 1 && errors[0].message === 'Malformed MJML. Check that your structure is correct and enclosed in <mjml> tags.') {
+        // we may be trying to preview a partial, retry with wrapping it in <mjml><mj-body></mj-body></mjml>
+        return mjmlToHtml(`<mjml><mj-body>${compiled}</mj-body></mjml>`, minify, beautify, fsPath, validation);
+    }
+    return { html, errors };
 }

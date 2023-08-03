@@ -2,7 +2,7 @@
     "name": "vscode-handlebars-mjml",
     "displayName": "Handlebars-MJML",
     "description": "MJML preview, lint, compile with handlebars templating for Visual Studio Code.",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "publisher": "rbremont",
     "license": "MIT",
     "readme": "README.md",

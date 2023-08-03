@@ -63,7 +63,7 @@ export default class Linter {
 
         try {
 
-            const { errors } = compileContent(textDocument, getPath(), "strict")
+            const { errors } = compileContent(textDocument, getPath(), false, false, "strict")
             if (errors && errors[0]) {
                 errors[0].errors.forEach((error: any) => {
                     const line: number = error.line - 1;

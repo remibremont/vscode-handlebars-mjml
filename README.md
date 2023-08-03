@@ -1,7 +1,7 @@
 # This repo is a fork of vscode-mjml
 
 
-# MJML
+# Handlebars - MJML
 MJML preview, lint, compile with handlebars support for Visual Studio Code.
 
 Code sample to use handlebars with MJML:
@@ -18,6 +18,12 @@ const mjmlBlob = readFileSync(path, 'utf8');
 
 const templateContext = { theme, title: 'title', value: 'value' };
 const compiledMjml = Handlebars.compile(mjmlBlob)(templateContext);
+Handlebars.registerHelper('include', (partial: string) => {
+    const partialPath = path.resolve(parsedDocumentPath.dir, `${partial}.mjml`);
+    const partialBlob = readFileSync(partialPath, 'utf8');
+    const partialCompiled = Handlebars.compile(partialBlob)(finalProps);
+    return new Handlebars.SafeString(partialCompiled);
+});
 const { html } = mjml2html(compiledMjml);
 ```
 
