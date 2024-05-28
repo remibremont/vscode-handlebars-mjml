@@ -148,18 +148,28 @@ export function compileContent(document: TextDocument, fsPath = document.uri.fsP
     const themeProps = existsSync(themeFile) ? JSON.parse(readFileSync(themeFile).toString()) : {};
     const propsFile = document.uri.fsPath.replace('.mjml', '.sample.json');
     const props = existsSync(propsFile) ? JSON.parse(readFileSync(propsFile).toString()) : {};
-    const finalProps = { theme: themeProps, ...props };
+    const globalPropsFile = document.uri.fsPath.replace(parsedDocumentPath.base, '_base.sample.json');
+    const globalProps = existsSync(globalPropsFile) ? JSON.parse(readFileSync(globalPropsFile).toString()) : {};
+    const finalProps = { theme: themeProps, ...globalProps,  ...props };
     Handlebars.registerHelper('include', (partial: string) => {
         const partialPath = path.resolve(parsedDocumentPath.dir, `${partial}.mjml`);
         const partialBlob = readFileSync(partialPath, 'utf8');
         const partialCompiled = Handlebars.compile(partialBlob)(finalProps);
         return new Handlebars.SafeString(partialCompiled);
     });
-    const compiled = Handlebars.compile(text)(finalProps);
+    const compiled = Handlebars.compile(processMjIncludes(text))(finalProps);
     const { html, errors } = mjmlToHtml(compiled, minify, beautify, fsPath, validation);
     if (errors !== undefined && errors.length === 1 && errors[0].message === 'Malformed MJML. Check that your structure is correct and enclosed in <mjml> tags.') {
         // we may be trying to preview a partial, retry with wrapping it in <mjml><mj-body></mj-body></mjml>
         return mjmlToHtml(`<mjml><mj-body>${compiled}</mj-body></mjml>`, minify, beautify, fsPath, validation);
     }
     return { html, errors };
+}
+
+/**
+ * Replaces instances of `<mj-include path="..." />` with `{{ include "..." }}`, so that *.sample.json works across includes
+ * @param content the content to replace in
+ */
+function processMjIncludes(content: string): string {
+    return content.replace(/<mj-include\s+path="([^"]+)"\s*\/>/, (_, path) => `{{ include "${path}" }}`)
 }
