@@ -155,6 +155,9 @@ export function compileContent(document: TextDocument, fsPath = document.uri.fsP
         const partialCompiled = Handlebars.compile(partialBlob)(finalProps);
         return new Handlebars.SafeString(partialCompiled);
     });
+    Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+        return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+    });
     const compiled = Handlebars.compile(text)(finalProps);
     const { html, errors } = mjmlToHtml(compiled, minify, beautify, fsPath, validation);
     if (errors !== undefined && errors.length === 1 && errors[0].message === 'Malformed MJML. Check that your structure is correct and enclosed in <mjml> tags.') {
